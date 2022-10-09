@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+// SPD////X-License-Identifier: GPL-2.0-only
 /* Copyright (C) 2020-2021 Martynas Pumputis */
 /* Copyright (C) 2021-2022 Authors of Cilium */
 
@@ -122,14 +122,27 @@ func main() {
 		select {
 		case <-ctx.Done():
 			log.Println("Detaching kprobes...")
-			bar := pb.StartNew(len(kprobes))
-			for _, kp := range kprobes {
-				_ = kp.Close()
-				bar.Increment()
-			}
-			bar.Finish()
+			//			bar := pb.StartNew(len(kprobes))
+			info, _ := kprobes[0].Info()
+			firstFD := uint(info.FD.Uint())
+			linfo, _ := kprobes[len(kprobes)-1].Info()
+			lastFD := uint(linfo.FD.Uint())
+			log.Printf("f %v l %v", firstFD, lastFD)
+
+			log.Println("start closing")
+			unix.CloseRange(firstFD, firstFD+600, 0)
+			log.Println("finished closing")
+			//kprobes[0].Close()
+			//			for _, kp := range kprobes {
+			//				info, _ := kp.Info()
+			//				log.Printf("fd: %d\n", info.FD)
+			//				_ = kp.Close()
+			//				bar.Increment()
+			//			}
+			//			bar.Finish()
 
 		default:
+			log.Println("what?")
 			for _, kp := range kprobes {
 				_ = kp.Close()
 			}
@@ -230,6 +243,7 @@ func main() {
 
 		select {
 		case <-ctx.Done():
+			fmt.Println("ctx done")
 			break
 		default:
 			continue

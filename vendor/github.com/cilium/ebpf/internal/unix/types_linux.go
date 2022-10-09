@@ -105,6 +105,10 @@ func Close(fd int) (err error) {
 	return linux.Close(fd)
 }
 
+func CloseRange(firstFd uint, lastFd uint) (err error) {
+	return linux.CloseRange(firstFd, lastFd, 0)
+}
+
 // EpollEvent is a wrapper
 type EpollEvent = linux.EpollEvent
 

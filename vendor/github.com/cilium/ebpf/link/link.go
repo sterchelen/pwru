@@ -105,6 +105,7 @@ type Info struct {
 	ID      ID
 	Program ebpf.ProgramID
 	extra   interface{}
+	FD      *sys.FD
 }
 
 type TracingInfo sys.TracingLinkInfo
@@ -306,5 +307,6 @@ func (l *RawLink) Info() (*Info, error) {
 		info.Id,
 		ebpf.ProgramID(info.ProgId),
 		extra,
+		l.fd,
 	}, nil
 }
